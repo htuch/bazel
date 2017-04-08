@@ -59,7 +59,7 @@ import java.util.Map;
 public class StandaloneTestStrategy extends TestStrategy {
   // TODO(bazel-team) - add tests for this strategy.
   public static final String COLLECT_COVERAGE =
-      "external/bazel_tools/tools/test/collect_coverage.sh";
+      "external/bazel_tools/tools/coverage/collect-coverage.sh";
 
   private static final ImmutableMap<String, String> ENV_VARS =
       ImmutableMap.<String, String>builder()
