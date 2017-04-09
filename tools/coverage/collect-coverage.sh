@@ -53,6 +53,9 @@ fi
 echo "--"
 echo "Post-processing coverage results:"
 
+echo "COVERAGE_MANIFEST:"
+cat "${COVERAGE_MANIFEST}"
+
 cat "${COVERAGE_MANIFEST}" | grep ".gcno$" | while read path; do
   mkdir -p "${COVERAGE_DIR}/$(dirname ${path})"
   cp "${ROOT}/${path}" "${COVERAGE_DIR}/${path}"
@@ -66,8 +69,11 @@ cat "${COVERAGE_MANIFEST}" | egrep ".(cc|h)$" | while read path; do
   touch "${COVERAGE_DIR}/${path}"
 done
 
+echo "gcda/gcno artifacts:"
+find -L "${COVERAGE_DIR}" -name "*.gcda" -o -name "*.gcno"
+
 # Run lcov over the .gcno and .gcda files to generate the lcov tracefile.
-/usr/bin/lcov -c --no-external -d "${COVERAGE_DIR}" -o "${COVERAGE_OUTPUT_FILE}"
+time /usr/bin/lcov -c --no-external -d "${COVERAGE_DIR}" -o "${COVERAGE_OUTPUT_FILE}"
 
 # The paths are all wrong, because they point to /tmp. Fix up the paths to
 # point to the exec root instead (${ROOT}).
