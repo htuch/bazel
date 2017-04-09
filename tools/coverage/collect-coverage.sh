@@ -23,7 +23,10 @@ if [[ "$COVERAGE_MANIFEST" != /* ]]; then
 fi
 
 export COVERAGE_DIR="$(mktemp -d ${TMPDIR:-/tmp}/tmp.XXXXXXXXXX)"
-trap "{ rm -rf ${COVERAGE_DIR} }" EXIT
+function cleanup() {
+  rm -rf "${COVERAGE_DIR}"
+}
+trap cleanup EXIT
 
 # C++ env variables
 export GCOV_PREFIX_STRIP=3
