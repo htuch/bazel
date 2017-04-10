@@ -69,13 +69,14 @@ cat "${COVERAGE_MANIFEST}" | egrep ".(cc|h)$" | while read path; do
   touch "${COVERAGE_DIR}/${path}"
 done
 
-echo "gcda/gcno artifacts:"
-find -L "${COVERAGE_DIR}" -name "*.gcda" -o -name "*.gcno"
+# Collect the .gcda and .gcno to allow the use of gcovr, lcov is too slow, see
+# https://github.com/bazelbuild/bazel/issues/1118.
+cd "${COVERAGE_DIR}"
+tar -cf ${COVERAGE_OUTPUT_FILE} $(find -L . -name "*.gcda" -o -name "*.gcno")
 
 # Run lcov over the .gcno and .gcda files to generate the lcov tracefile.
-time /usr/bin/lcov -c --no-external -d "${COVERAGE_DIR}" -o "${COVERAGE_OUTPUT_FILE}"
-
+#time /usr/bin/lcov -c ${EXTRA_LCOV_ARGS} --no-external -d "${COVERAGE_DIR}" -o "${COVERAGE_OUTPUT_FILE}"
+#
 # The paths are all wrong, because they point to /tmp. Fix up the paths to
 # point to the exec root instead (${ROOT}).
-sed -i -e "s*${COVERAGE_DIR}*${ROOT}*g" "${COVERAGE_OUTPUT_FILE}"
-
+#sed -i -e "s*${COVERAGE_DIR}*${ROOT}*g" "${COVERAGE_OUTPUT_FILE}"
